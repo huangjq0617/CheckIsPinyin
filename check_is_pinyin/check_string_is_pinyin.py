@@ -14,15 +14,18 @@ from collections import defaultdict
 
 class CheckStringIsPinyin(object):
 
-    def __init__(self, pinyin_list_path):
+    def __init__(self, pinyin_list_path='./pinyin_list.txt'):
 
-        self.first_alpha_index_map = self.build_first_alpha_index_map(pinyin_list_path)
+        self.first_alpha_index_map = self.build_first_alpha_index_map(
+            os.path.join(os.path.dirname(os.path.realpath(__file__)), pinyin_list_path)
+        )
 
     @staticmethod
     def build_first_alpha_index_map(pinyin_list_path):
 
         index_map = {}
 
+        print os.getcwd()
         if not os.path.exists(pinyin_list_path):
             return index_map
 
@@ -130,8 +133,7 @@ class CheckStringIsPinyin(object):
 
 if __name__ == '__main__':
 
-    checkIsPinyin = CheckStringIsPinyin('./pinyin_list.txt')
+    checkIsPinyin = CheckStringIsPinyin()
 
     print checkIsPinyin.get_all_pinyin_tokens('guangangei')
-    print checkIsPinyin.get_all_pinyin_tokens('hello')
-    print checkIsPinyin.check_string_is_pinyin('hello')
+    print checkIsPinyin.get_all_pinyin_tokens('alone')
