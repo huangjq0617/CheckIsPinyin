@@ -9,7 +9,6 @@ Created on 2018/10/18 上午11:15
 """
 
 import os
-from collections import defaultdict
 
 
 class CheckStringIsPinyin(object):
@@ -42,11 +41,13 @@ class CheckStringIsPinyin(object):
                 first_alpha = pinyin[0]
                 if first_alpha in index_map:
                     maxlen_pinyin_list = index_map[first_alpha]
-                    maxlen_pinyin_list[1].append(pinyin)
+                    maxlen_pinyin_list[1].add(pinyin)
                     if pinyin_len > maxlen_pinyin_list[0]:
                         maxlen_pinyin_list[0] = pinyin_len
                 else:
-                    index_map[first_alpha] = [pinyin_len, [pinyin]]
+                    pinyin_set = set()
+                    pinyin_set.add(pinyin)
+                    index_map[first_alpha] = [pinyin_len, pinyin_set]
 
         return index_map
 
@@ -67,11 +68,11 @@ class CheckStringIsPinyin(object):
             if first_alpha not in self.first_alpha_index_map:
                 return False
 
-            maxlen, possible_list = self.first_alpha_index_map[first_alpha]
+            maxlen, possible_set = self.first_alpha_index_map[first_alpha]
             for i in range(min(len(s), maxlen), 0, -1):
                 cheched = s[:i]
                 remained = s[i:]
-                if cheched in possible_list:
+                if cheched in possible_set:
                     if len(remained) == 0:
                         return True
                     else:
@@ -101,12 +102,12 @@ class CheckStringIsPinyin(object):
             if first_alpha not in self.first_alpha_index_map:
                 return all_hyp_result
 
-            maxlen, possible_list = self.first_alpha_index_map[first_alpha]
+            maxlen, possible_set = self.first_alpha_index_map[first_alpha]
             for i in range(min(len(s), maxlen), 0, -1):
                 checked = s[:i]
                 remained = s[i:]
 
-                if checked in possible_list:
+                if checked in possible_set:
                     if len(remained) == 0:
                         tokened_pinyin = [checked]
                         prefix_index = index
@@ -135,5 +136,8 @@ if __name__ == '__main__':
 
     checkIsPinyin = CheckStringIsPinyin()
 
+    print checkIsPinyin.check_string_is_pinyin('abc')
+
     print checkIsPinyin.get_all_pinyin_tokens('guangangei')
     print checkIsPinyin.get_all_pinyin_tokens('alone')
+
